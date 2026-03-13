@@ -30,6 +30,8 @@ No special setup needed.
 4) Open the link from the terminal (usually http://localhost:5173)
 5) Create a new profile directly in the application with your jira email and token.
 
+## AI
+This project began as a small tool to solve a personal need and as a playground to experiment with AI-assisted development.
 
 ## License
 This project is open source under the MIT License. See the LICENSE file for details.
