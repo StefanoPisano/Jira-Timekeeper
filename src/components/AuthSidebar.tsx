@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Key, Trash2, Edit2, CheckCircle2, X, Info, HelpCircle } from 'lucide-react';
-import { type JiraAuth, testAuthConnection } from '../services/api';
+import type { JiraAuth } from '../types/jira';
+import { testAuthConnection } from '../services/auth';
 
 interface AuthSidebarProps {
     onAuthChange: () => void;
@@ -107,6 +108,7 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
 
         setAuths(updatedAuths);
         setIsEditing(false);
+        setTestStatus("idle")
         onAuthChange();
     };
 
@@ -157,9 +159,6 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
                     <div className="settings-modal" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-6">
                             <h2>{currentAuth.label ? 'Edit' : 'Add'} Jira Auth</h2>
-                            <button className="btn-icon" onClick={() => setIsEditing(false)}>
-                                <X size={24} />
-                            </button>
                         </div>
 
                         <form onSubmit={handleSave}>
@@ -221,7 +220,9 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
                                     {testStatus === 'testing' ? 'Testing...' : 'Test Connection'}
                                 </button>
                                 <div className="flex-1"></div>
-                                <button type="button" className="btn btn-outline" onClick={() => setIsEditing(false)}>
+                                <button type="button" className="btn btn-outline" onClick={() => {
+                                    setIsEditing(false); setTestStatus("idle");
+                                }}>
                                     Cancel
                                 </button>
                                 <button type="submit" className="btn btn-primary">

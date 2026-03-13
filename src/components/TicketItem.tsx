@@ -1,16 +1,20 @@
 import React from 'react';
-import { Clock } from 'lucide-react';
-import type { Ticket } from '../services/api';
+import {Clock} from 'lucide-react';
+import type {Ticket} from '../types/jira';
+import {getActiveAuth} from "../services/auth.ts";
 
 interface TicketItemProps {
     ticket: Ticket;
 }
 
 export const TicketItem: React.FC<TicketItemProps> = ({ ticket }) => {
+    const active = getActiveAuth();
+    const domain = active?.domain;
+    const url = `https://${domain}/browse/${ticket.id}`
     return (
         <div className="ticket-item">
             <div className="ticket-header">
-                <span className="ticket-id">{ticket.id}</span>
+                <span className="ticket-id"><a href={url} target={"_blank"}>{ticket.id}</a></span>
                 <div className="ticket-hours">
                     <Clock size={12} className="clock-icon" />
                     <span>{ticket.loggedHours}h</span>

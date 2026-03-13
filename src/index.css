@@ -359,7 +359,7 @@ body {
   margin-bottom: 0.5rem;
 }
 
-.ticket-id {
+.ticket-id a{
   font-size: 0.7rem;
   font-weight: 600;
   background: rgba(92, 107, 192, 0.15);

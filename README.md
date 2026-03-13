@@ -25,10 +25,9 @@ It’s built to stay out of your way so you can focus on getting work done — n
 No special setup needed.
 
 1) Install the dependencies `npm install`
-2) Set the JIRA Domain in the `.env` file
-3) Start the app (dev mode) `npm run dev`
-4) Open the link from the terminal (usually http://localhost:5173)
-5) Create a new profile directly in the application with your jira email and token.
+2) Start the app (dev mode) `npm run dev`
+3) Open the link from the terminal (usually http://localhost:5173)
+4) Create a new profile directly in the application with your jira domain, email and token.
 
 ## AI
 This project began as a small tool to solve a personal need and as a playground to experiment with AI-assisted development.

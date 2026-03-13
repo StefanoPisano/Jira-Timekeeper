@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { addWeeks, subWeeks, format, startOfWeek, endOfWeek } from 'date-fns';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Loader2 } from 'lucide-react';
-import { fetchWeeklyWorklogs } from '../services/api';
-import type { DayWorklog } from '../services/api';
-import { DayCard } from './DayCard';
+import React, {useEffect, useState} from 'react';
+import {addWeeks, endOfWeek, format, startOfWeek, subWeeks} from 'date-fns';
+import {Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2} from 'lucide-react';
+import type {DayWorklog} from '../types/jira.ts';
+import {fetchWeeklyWorklogs} from '../services/api';
+import {DayCard} from './DayCard';
 
 export const WeeklyCalendar: React.FC = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
