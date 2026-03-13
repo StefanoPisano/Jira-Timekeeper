@@ -1,73 +1,35 @@
-# Jira Timekeeper
+# ⏱️ Jira Timekeeper
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Track your time. Sync your work. Stay focused.
 
-Currently, two official plugins are available:
+Track your work time without the busywork — turn Jira tickets into simple, stress‑free time logs.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Overview
+Jira Timekeeper is a lightweight web app that helps you keep track of the time you spend on your tasks.
 
-## React Compiler
+It’s built to stay out of your way so you can focus on getting work done — not filling out timesheets or relying on expensive external plugins. With a simple interface and fast performance, it makes tracking your work effortless throughout the day.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+#### Key features
 
-## Expanding the ESLint configuration
+▶️ Start and stop timers for your tasks with a single click
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+📅 Instantly see what you’ve worked on today
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+⚡ Lightweight and fast — runs directly in your browser
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Tech stack (kept simple)
+- React + Vite
+- TypeScript
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Run it locally
+No special setup needed.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1) Install the dependencies `npm install`
+2) Set the JIRA Domain in the `.env` file
+3) Start the app (dev mode) `npm run dev`
+4) Open the link from the terminal (usually http://localhost:5173)
+5) Create a new profile directly in the application with your jira email and token.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## License
+This project is open source under the MIT License. See the LICENSE file for details.
