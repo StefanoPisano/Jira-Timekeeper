@@ -1,7 +1,7 @@
 import React from 'react';
 import {format, isToday} from 'date-fns';
-import type {DayWorklog} from '../types/jira.ts';
-import {TicketItem} from './TicketItem';
+import type {DayWorklog} from '../../types/jira.ts';
+import {TicketItem} from '../Ticket/TicketItem';
 
 interface DayCardProps {
     worklog: DayWorklog;

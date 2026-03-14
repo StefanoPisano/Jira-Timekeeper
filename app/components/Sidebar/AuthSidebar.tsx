@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Key, Trash2, Edit2, CheckCircle2, X, Info, HelpCircle } from 'lucide-react';
-import type { JiraAuth } from '../types/jira';
-import { testAuthConnection } from '../services/auth';
+import type { JiraAuth } from '../../types/jira';
+import { testAuthConnection } from '../../services/auth';
+import Footer from "@/app/components/Footer/Footer";
 
 interface AuthSidebarProps {
     onAuthChange: () => void;
@@ -249,6 +250,9 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
                     </div>
                 </div>
             )}
+
+
+            <Footer/>
         </div>
     );
 };

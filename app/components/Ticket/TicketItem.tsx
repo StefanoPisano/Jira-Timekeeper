@@ -1,7 +1,7 @@
 import React from 'react';
 import {Clock} from 'lucide-react';
-import type {Ticket} from '../types/jira';
-import {getActiveAuth} from "../services/auth.ts";
+import type {Ticket} from '../../types/jira';
+import {getActiveAuth} from "@/app/services/auth";
 
 interface TicketItemProps {
     ticket: Ticket;

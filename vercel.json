@@ -1,9 +1,0 @@
-{
-  "routes": [
-    {
-      "src": "/api/jira",
-      "dest": "/api/jira.ts"
-    }
-  ],
-"devCommand": "vite"
-}

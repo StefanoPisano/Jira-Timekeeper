@@ -1,5 +1,5 @@
 import type { JiraAuth } from '../types/jira';
-import {jiraFetch} from "./jiraClient.ts";
+import {jiraFetch} from "@/app/services/jiraClient";
 
 const getStorageValue = (key: string) => localStorage.getItem(key);
 

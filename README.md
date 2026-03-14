@@ -18,7 +18,7 @@ It’s built to stay out of your way so you can focus on getting work done — n
 ⚡ Lightweight and fast — runs directly in your browser
 
 ## Tech stack (kept simple)
-- React + Vite
+- React + Next.js
 - TypeScript
 
 ## Run it locally
@@ -26,11 +26,14 @@ No special setup needed.
 
 1) Install the dependencies `npm install`
 2) Start the app (dev mode) `npm run dev`
-3) Open the link from the terminal (usually http://localhost:5173)
+3) Open the link from the terminal (usually http://localhost:3000)
 4) Create a new profile directly in the application with your jira domain, email and token.
 
 ## AI
 This project began as a small tool to solve a personal need and as a playground to experiment with AI-assisted development.
+Development has been done with the help of the following tools:
+- Antigravity
+- ChatGPT
 
 ## License
-This project is open source under the MIT License. See the LICENSE file for details.
+This project is open source under the Apache License. See the LICENSE file for details.

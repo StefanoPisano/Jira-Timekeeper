@@ -16,9 +16,9 @@ const getAuthHeaders = (): HeadersInit => {
     const auth = btoa(`${email.trim()}:${token.trim()}`);
 
     return {
-        Authorization: `Basic ${auth}`,
-        Accept: 'application/json',
         'x-jira-domain': domain.trim(),
+        'x-jira-token': token,
+        'x-jira-email': email,
     } as HeadersInit;
 };
 

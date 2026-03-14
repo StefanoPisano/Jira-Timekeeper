@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {addWeeks, endOfWeek, format, startOfWeek, subWeeks} from 'date-fns';
 import {Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2} from 'lucide-react';
-import type {DayWorklog} from '../types/jira.ts';
-import {fetchWeeklyWorklogs} from '../services/api';
-import {DayCard} from './DayCard';
+import type {DayWorklog} from '../../types/jira.ts';
+import {fetchWeeklyWorklogs} from '../../services/api';
+import {DayCard} from '../DayCard/DayCard';
 
 export const WeeklyCalendar: React.FC = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -23,7 +23,6 @@ export const WeeklyCalendar: React.FC = () => {
                 const total = data.reduce((sum, day) => sum + day.totalHours, 0);
                 setWeeklyTotal(parseFloat(total.toFixed(1)));
             } catch (err: any) {
-                console.error("Failed to fetch worklogs", err);
                 setError(err.message || "An error occurred while fetching Jira data.");
             } finally {
                 setLoading(false);
