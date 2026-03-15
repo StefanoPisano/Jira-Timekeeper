@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {addWeeks, endOfWeek, format, startOfWeek, subWeeks} from 'date-fns';
 import {Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2} from 'lucide-react';
 import type {DayWorklog} from '../../types/jira.ts';
-import {fetchWeeklyWorklogs} from '../../services/api';
+import {fetchWeeklyWorklogs} from '../../services/worklogs';
 import {DayCard} from '../DayCard/DayCard';
 
 export const WeeklyCalendar: React.FC = () => {
@@ -45,7 +45,6 @@ export const WeeklyCalendar: React.FC = () => {
             <header className="calendar-header">
                 <div className="header-title">
                     <CalendarIcon className="header-icon" />
-                    <h1>Jira Weekly Time</h1>
                 </div>
 
                 <div className="header-controls">

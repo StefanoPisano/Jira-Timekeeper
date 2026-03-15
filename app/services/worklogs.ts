@@ -1,6 +1,6 @@
 import {addDays, format, isSameDay, startOfWeek} from 'date-fns';
 import type {DayWorklog} from '../types/jira';
-import {formatDate, jiraFetch} from './jiraClient';
+import {formatDate, apiFetch} from './api/apiClient';
 
 export const fetchWeeklyWorklogs = async (currentDate: Date): Promise<DayWorklog[]> => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -21,19 +21,19 @@ export const fetchWeeklyWorklogs = async (currentDate: Date): Promise<DayWorklog
     try {
         const jql = `worklogAuthor = currentUser() AND worklogDate >= "${startStr}" AND worklogDate <= "${endStr}"`;
 
-        const searchRes =await jiraFetch(
+        const searchRes =await apiFetch(
             `/api/jira/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=summary,project`);
 
         if (!searchRes.ok) throw new Error(`Jira Search failed: ${searchRes.statusText}`);
         const searchData = await searchRes.json();
         const issues = searchData.issues || [];
 
-        const meRes = await jiraFetch('/api/jira/rest/api/3/myself');
+        const meRes = await apiFetch('/api/jira/rest/api/3/myself');
         const meData = await meRes.json();
         const currentUserAccountId = meData.accountId;
 
         for (const issue of issues) {
-            const worklogRes = await jiraFetch(`/api/jira/rest/api/3/issue/${issue.key}/worklog`);
+            const worklogRes = await apiFetch(`/api/jira/rest/api/3/issue/${issue.key}/worklog`);
 
             if (!worklogRes.ok) continue;
 
@@ -78,7 +78,6 @@ export const fetchWeeklyWorklogs = async (currentDate: Date): Promise<DayWorklog
         });
 
     } catch (error) {
-        console.error("Error communicating with Jira:", error);
         throw error;
     }
 

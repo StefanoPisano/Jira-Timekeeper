@@ -1,23 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Key, Trash2, Edit2, CheckCircle2, X, Info, HelpCircle } from 'lucide-react';
-import type { JiraAuth } from '../../types/jira';
-import { testAuthConnection } from '../../services/auth';
-import Footer from "@/app/components/Footer/Footer";
+import React, {useState, useEffect, SyntheticEvent} from 'react';
+import {Key, Trash2, Edit2, CheckCircle2, X, Info, HelpCircle} from 'lucide-react';
+import type {JiraAuth} from '../../types/jira';
+import {getActiveAuth, testConnection} from "../../services/authentication/auth";
 
 interface AuthSidebarProps {
     onAuthChange: () => void;
 }
 
-export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
+export const AuthSidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
     const [auths, setAuths] = useState<JiraAuth[]>([]);
     const [activeId, setActiveId] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [currentAuth, setCurrentAuth] = useState<Partial<JiraAuth>>({});
     const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
-
-    useEffect(() => {
-        loadAuths();
-    }, []);
 
     const loadAuths = () => {
         const storedAuths = localStorage.getItem('JIRA_AUTHS');
@@ -33,11 +28,23 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
         }
     };
 
-    const handleSelect = (id: string) => {
-        localStorage.setItem('ACTIVE_JIRA_AUTH_ID', id);
-        setActiveId(id);
+    useEffect(() => {
+        loadAuths();
+    }, []);
+
+    // const handleSelect = (id: string) => {
+    //     localStorage.setItem('ACTIVE_JIRA_AUTH_ID', id);
+    //     setActiveId(id);
+    //     onAuthChange();
+    // };
+
+    const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = event.target.value;
+        localStorage.setItem('ACTIVE_JIRA_AUTH_ID', value);
+        setActiveId(value);
         onAuthChange();
     };
+
 
     const handleAdd = () => {
         setCurrentAuth({
@@ -50,21 +57,26 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
         setIsEditing(true);
     };
 
-    const handleEdit = (auth: JiraAuth) => {
-        setCurrentAuth(auth);
-        setIsEditing(true);
+    const handleEdit = () => {
+        const currentAuth = getActiveAuth();
+        if (currentAuth) {
+            setCurrentAuth(currentAuth);
+            setIsEditing(true);
+        }
     };
 
-    const handleDelete = (id: string, e: React.MouseEvent) => {
+    const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
-        const updated = auths.filter(a => a.id !== id);
+        const currentAuth = getActiveAuth();
+        const deletedId = currentAuth?.id;
+        const updated = auths.filter(a => a.id !== deletedId);
         localStorage.setItem('JIRA_AUTHS', JSON.stringify(updated));
-        if (activeId === id) {
-            const nextActive = updated.length > 0 ? updated[0].id : null;
-            if (nextActive) localStorage.setItem('ACTIVE_JIRA_AUTH_ID', nextActive);
-            else localStorage.removeItem('ACTIVE_JIRA_AUTH_ID');
-            setActiveId(nextActive);
-        }
+
+        const nextActive = updated.length > 0 ? updated[0].id : null;
+        if (nextActive) localStorage.setItem('ACTIVE_JIRA_AUTH_ID', nextActive);
+        else localStorage.removeItem('ACTIVE_JIRA_AUTH_ID');
+        setActiveId(nextActive);
+
         setAuths(updated);
         onAuthChange();
     };
@@ -72,7 +84,7 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
     const handleTest = async () => {
         if (!currentAuth.email || !currentAuth.token) return;
         setTestStatus('testing');
-        const success = await testAuthConnection({
+        const success = await testConnection({
             ...currentAuth,
             email: currentAuth.email.trim(),
             token: currentAuth.token.trim(),
@@ -116,43 +128,29 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
     return (
         <div className="auth-sidebar-content">
             <div className="sidebar-section">
-                <div className="section-header">
+                {auths.length > 0 ? (
+                    <select className="w-full auth-list auth-item" onChange={handleSelect}>
+                        {auths.map(auth => (
+                            <option key={auth.id} id={auth.id} value={auth.id}>
+                                {auth.label}
+                            </option>
+                        ))}
+                    </select>
+                ) : (
+                    <div className={"m-auto text-center text-xs text-error"}>Missing auth profile.<br/>Please add one.</div>
+                )}
+            </div>
 
-                    <button className="btn-icon-sm" onClick={handleAdd} title="Add New Auth">
-                        <Key size={16} />
-                    </button>
-
-                </div>
-
-                <div className="auth-list">
-                    {auths.length > 0 ? (
-                        auths.map(auth => (
-                            <div
-                                key={auth.id}
-                                className={`auth-item ${activeId === auth.id ? 'active' : ''}`}
-                                onClick={() => handleSelect(auth.id)}
-                            >
-                                <div className="auth-info">
-                                    <span className="auth-label">{auth.label}</span>
-                                    <span className="auth-domain">{auth.domain || 'Default'}</span>
-                                </div>
-                                <div className="auth-actions">
-                                    <button className="btn-icon-xs" onClick={(e) => { e.stopPropagation(); handleEdit(auth); }}>
-                                        <Edit2 size={12} />
-                                    </button>
-                                    <button className="btn-icon-xs text-error" onClick={(e) => handleDelete(auth.id, e)}>
-                                        <Trash2 size={12} />
-                                    </button>
-                                </div>
-                                {activeId === auth.id && <CheckCircle2 size={14} className="active-indicator" />}
-                            </div>
-                        ))
-                    ) : (
-                        <div className="no-auths">
-                            <p>No auth profiles found.</p>
-                        </div>
-                    )}
-                </div>
+            <div className="section-header flex gap-1.5">
+                <button className="btn-icon-sm" onClick={handleAdd} title="Add New Auth">
+                    <Key size={24}/>
+                </button>
+                <button className="btn-icon-sm" onClick={handleEdit}  disabled={auths.length === 0 || getActiveAuth() == null}>
+                    <Edit2 size={24}/>
+                </button>
+                <button className="btn-icon-sm text-error" onClick={handleDelete} disabled={auths.length === 0 || getActiveAuth() == null}>
+                    <Trash2 size={24}/>
+                </button>
             </div>
 
             {isEditing && (
@@ -169,7 +167,7 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
                                     type="text"
                                     placeholder="e.g. Work, Personal, Client X"
                                     value={currentAuth.label || ''}
-                                    onChange={(e) => setCurrentAuth({ ...currentAuth, label: e.target.value })}
+                                    onChange={(e) => setCurrentAuth({...currentAuth, label: e.target.value})}
                                     required
                                 />
                             </div>
@@ -180,7 +178,7 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
                                     type="text"
                                     placeholder="e.g. your-company.atlassian.net"
                                     value={currentAuth.domain || ''}
-                                    onChange={(e) => setCurrentAuth({ ...currentAuth, domain: e.target.value })}
+                                    onChange={(e) => setCurrentAuth({...currentAuth, domain: e.target.value})}
                                 />
                                 <p className="help-text">Leave empty to use the default configured domain.</p>
                             </div>
@@ -191,7 +189,7 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
                                     type="email"
                                     placeholder="your-email@company.com"
                                     value={currentAuth.email || ''}
-                                    onChange={(e) => setCurrentAuth({ ...currentAuth, email: e.target.value })}
+                                    onChange={(e) => setCurrentAuth({...currentAuth, email: e.target.value})}
                                     required
                                 />
                             </div>
@@ -202,11 +200,11 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
                                     type="password"
                                     placeholder="Your Jira API Token"
                                     value={currentAuth.token || ''}
-                                    onChange={(e) => setCurrentAuth({ ...currentAuth, token: e.target.value })}
+                                    onChange={(e) => setCurrentAuth({...currentAuth, token: e.target.value})}
                                     required
                                 />
                                 <div className="help-text flex items-center gap-1">
-                                    <Info size={12} />
+                                    <Info size={12}/>
                                     <span>Create one at id.atlassian.com/manage/api-tokens</span>
                                 </div>
                             </div>
@@ -222,7 +220,8 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
                                 </button>
                                 <div className="flex-1"></div>
                                 <button type="button" className="btn btn-outline" onClick={() => {
-                                    setIsEditing(false); setTestStatus("idle");
+                                    setIsEditing(false);
+                                    setTestStatus("idle");
                                 }}>
                                     Cancel
                                 </button>
@@ -232,13 +231,14 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
                             </div>
 
                             {testStatus !== 'idle' && (
-                                <div className={`mt-4 p-3 rounded-md text-sm flex items-center gap-2 ${testStatus === 'success' ? 'bg-success/10 text-success' :
-                                    testStatus === 'error' ? 'bg-danger/10 text-danger' :
-                                        'bg-accent/10 text-accent'
+                                <div
+                                    className={`mt-4 p-3 rounded-md text-sm flex items-center gap-2 ${testStatus === 'success' ? 'bg-success/10 text-success' :
+                                        testStatus === 'error' ? 'bg-danger/10 text-danger' :
+                                            'bg-accent/10 text-accent'
                                     }`}>
-                                    {testStatus === 'success' && <CheckCircle2 size={16} />}
-                                    {testStatus === 'error' && <X size={16} />}
-                                    {testStatus === 'testing' && <HelpCircle size={16} className="animate-spin" />}
+                                    {testStatus === 'success' && <CheckCircle2 size={16}/>}
+                                    {testStatus === 'error' && <X size={16}/>}
+                                    {testStatus === 'testing' && <HelpCircle size={16} className="animate-spin"/>}
                                     <span>
                                         {testStatus === 'success' && 'Connection successful!'}
                                         {testStatus === 'error' && 'Connection failed. Please check your credentials and domain.'}
