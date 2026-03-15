@@ -3,7 +3,7 @@
 import {useState} from 'react';
 import {CalendarIcon} from 'lucide-react';
 import {WeeklyCalendar} from './components/Calendar/WeeklyCalendar';
-import {AuthSidebar} from './components/Sidebar/AuthSidebar';
+import {Sidebar} from './components/Sidebar/Sidebar';
 import Footer from "@/app/components/Footer/Footer";
 
 export default function Page() {
@@ -20,7 +20,7 @@ export default function Page() {
                     <CalendarIcon className="text-accent" size={24} />
                     <span className="app-name">Jira Timekeeper</span>
                 </div>
-                <AuthSidebar onAuthChange={handleAuthChange} />
+                <Sidebar onAuthChange={handleAuthChange} />
             </nav>
 
             <div className="main-content flex flex-col justify-between">

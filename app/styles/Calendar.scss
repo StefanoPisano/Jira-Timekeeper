@@ -1,0 +1,134 @@
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  height: 80%;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-secondary);
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-icon {
+  color: var(--accent-primary);
+}
+
+.header-title h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.week-navigation {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-primary);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.week-range {
+  font-weight: 500;
+  font-size: 0.9rem;
+  min-width: 140px;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.weekly-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.summary-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.calendar-grid-wrapper {
+  flex: 1;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1rem;
+  height: 100%;
+}
+
+
+@media (max-width: 1200px) {
+  .calendar-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .calendar-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+
+  .header-controls {
+    justify-content: space-between;
+  }
+
+  .weekly-summary {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-title {
+    display: none;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .header-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .week-navigation {
+    justify-content: space-between;
+  }
+}

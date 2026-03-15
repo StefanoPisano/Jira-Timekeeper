@@ -4,6 +4,7 @@ import {Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2} from 'luci
 import type {DayWorklog} from '../../types/jira.ts';
 import {fetchWeeklyWorklogs} from '../../services/worklogs';
 import {DayCard} from '../DayCard/DayCard';
+import "../../styles/Calendar.scss"
 
 export const WeeklyCalendar: React.FC = () => {
     const [currentDate, setCurrentDate] = useState(new Date());

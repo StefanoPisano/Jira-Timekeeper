@@ -2,6 +2,7 @@ import React from 'react';
 import {format, isToday, isWeekend} from 'date-fns';
 import type {DayWorklog} from '../../types/jira.ts';
 import {TicketItem} from '../Ticket/TicketItem';
+import "../../styles/DayCard.scss"
 
 interface DayCardProps {
     worklog: DayWorklog;

@@ -2,12 +2,14 @@ import React, {useState, useEffect, SyntheticEvent} from 'react';
 import {Key, Trash2, Edit2, CheckCircle2, X, Info, HelpCircle} from 'lucide-react';
 import type {JiraAuth} from '../../types/jira';
 import {getActiveAuth, testConnection} from "../../services/authentication/auth";
+import "../../styles/Modal.scss";
+import "../../styles/Sidebar.scss";
 
 interface AuthSidebarProps {
     onAuthChange: () => void;
 }
 
-export const AuthSidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
+export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
     const [auths, setAuths] = useState<JiraAuth[]>([]);
     const [activeId, setActiveId] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);

@@ -1,0 +1,122 @@
+.day-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+  backdrop-filter: blur(8px);
+  min-height: 400px;
+}
+
+.day-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+}
+
+.day-card.is-today {
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+.day-card.weekend {
+  background: var(--bg-card) !important;
+  opacity: .4 !important;
+}
+
+.day-card.is-empty {
+  opacity: 0.7;
+}
+
+.day-card.is-empty:hover {
+  opacity: 1;
+}
+
+.day-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.day-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.day-name {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.day-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.is-today .day-number,
+.is-today .day-name {
+  color: var(--accent-primary);
+}
+
+.day-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.total-hours {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.total-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+}
+
+.no-tickets {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-style: italic;
+  opacity: 0.5;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 1rem;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: var(--accent-primary);
+}
+
+.day-ok {
+  background-color: #4caf50;
+}
+
+.day-warning {
+  background-color: #ff9800;
+}
