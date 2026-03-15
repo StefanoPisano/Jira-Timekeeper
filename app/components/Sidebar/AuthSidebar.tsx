@@ -127,30 +127,31 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
 
     return (
         <div className="auth-sidebar-content">
-            <div className="sidebar-section">
-                {auths.length > 0 ? (
-                    <select className="w-full auth-list auth-item" onChange={handleSelect}>
-                        {auths.map(auth => (
-                            <option key={auth.id} id={auth.id} value={auth.id}>
-                                {auth.label}
-                            </option>
-                        ))}
-                    </select>
-                ) : (
-                    <div className={"m-auto text-center text-xs text-error"}>Missing auth profile.<br/>Please add one.</div>
-                )}
-            </div>
-
-            <div className="section-header flex gap-1.5">
-                <button className="btn-icon-sm" onClick={handleAdd} title="Add New Auth">
-                    <Key size={24}/>
-                </button>
-                <button className="btn-icon-sm" onClick={handleEdit}  disabled={auths.length === 0 || getActiveAuth() == null}>
-                    <Edit2 size={24}/>
-                </button>
-                <button className="btn-icon-sm text-error" onClick={handleDelete} disabled={auths.length === 0 || getActiveAuth() == null}>
-                    <Trash2 size={24}/>
-                </button>
+            <div className={"auth-sidebar-profile"}>
+                <div className="sidebar-auth-list">
+                    {auths.length > 0 ? (
+                        <select className="w-full select___auth-list" onChange={handleSelect}>
+                            {auths.map(auth => (
+                                <option key={auth.id} id={auth.id} value={auth.id}>
+                                    {auth.label}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <div className={"text-center text-xs no-auths"}>Missing auth profile. Please add one.</div>
+                    )}
+                </div>
+                <div className="sidebar-auth-actions flex gap-1.5">
+                    <button className="btn-icon-sm" onClick={handleAdd} title="Add New Auth">
+                        <Key size={24}/>
+                    </button>
+                    <button className="btn-icon-sm" onClick={handleEdit}  disabled={auths.length === 0 || getActiveAuth() == null}>
+                        <Edit2 size={24}/>
+                    </button>
+                    <button className="btn-icon-sm text-error" onClick={handleDelete} disabled={auths.length === 0 || getActiveAuth() == null}>
+                        <Trash2 size={24}/>
+                    </button>
+                </div>
             </div>
 
             {isEditing && (

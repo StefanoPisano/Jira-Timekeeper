@@ -1,5 +1,5 @@
 import React from 'react';
-import {format, isToday} from 'date-fns';
+import {format, isToday, isWeekend} from 'date-fns';
 import type {DayWorklog} from '../../types/jira.ts';
 import {TicketItem} from '../Ticket/TicketItem';
 
@@ -12,9 +12,10 @@ export const DayCard: React.FC<DayCardProps> = ({ worklog }) => {
     const dayName = format(date, 'EEEE');
     const dayNumber = format(date, 'd');
     const isCurrentDay = isToday(date);
+    const isWeekendDay = isWeekend(date);
 
     return (
-        <div className={`day-card ${isCurrentDay ? 'is-today' : ''} ${worklog.totalHours === 0 ? 'is-empty' : ''}`}>
+        <div className={`day-card ${isCurrentDay ? 'is-today' : ''} ${worklog.totalHours === 0 ? 'is-empty' : ''} ${isWeekendDay ? 'weekend' : ''}`}>
             <div className="day-header">
                 <div className="day-info">
                     <span className="day-name">{dayName}</span>
