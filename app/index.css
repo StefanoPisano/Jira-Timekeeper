@@ -510,6 +510,10 @@ body {
     flex-direction: column;
   }
 
+  .header-title {
+    display: none;
+  }
+
   .sidebar {
     width: 100%;
     flex-direction: column;
@@ -533,7 +537,7 @@ body {
   }
 
 
-  .sidebar-auth-actions {
+  .sidebar-actions {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -554,7 +558,7 @@ body {
     height: 40px;
   }
 
-  .sidebar-auth-actions{
+  .sidebar-actions {
     flex-basis: 20%;
     margin: 0
   }

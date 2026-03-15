@@ -141,7 +141,7 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
                         <div className={"text-center text-xs no-auths"}>Missing auth profile. Please add one.</div>
                     )}
                 </div>
-                <div className="sidebar-auth-actions flex gap-1.5">
+                <div className="sidebar-actions flex gap-1.5">
                     <button className="btn-icon-sm" onClick={handleAdd} title="Add New Auth">
                         <Key size={24}/>
                     </button>
