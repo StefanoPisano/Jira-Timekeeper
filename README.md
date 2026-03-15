@@ -31,7 +31,7 @@ No special setup needed.
 
 ## AI
 This project began as a small tool to solve a personal need and as a playground to experiment with AI-assisted development.
-Development has been done with the help of the following tools:
+Development has been done with the help of the **free tiers plans** of the following tools:
 - Antigravity
 - ChatGPT
 
