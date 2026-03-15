@@ -1,11 +1,9 @@
-// app/page.tsx
-'use client'; // needed because this is a client-side component
+'use client';
 
-import { useState } from 'react';
-import { CalendarIcon } from 'lucide-react';
-import { WeeklyCalendar } from './components/Calendar/WeeklyCalendar';
-import { AuthSidebar } from './components/Sidebar/AuthSidebar';
-import './page.css';
+import {useState} from 'react';
+import {CalendarIcon} from 'lucide-react';
+import {WeeklyCalendar} from './components/Calendar/WeeklyCalendar';
+import {AuthSidebar} from './components/Sidebar/AuthSidebar';
 import Footer from "@/app/components/Footer/Footer";
 
 export default function Page() {
@@ -24,10 +22,13 @@ export default function Page() {
                 </div>
                 <AuthSidebar onAuthChange={handleAuthChange} />
             </nav>
-            <main className="main-content">
-                <WeeklyCalendar key={refreshKey} />
-            </main>
-            <Footer></Footer>
+
+            <div className="main-content flex flex-col justify-between">
+                <main >
+                    <WeeklyCalendar key={refreshKey} />
+                </main>
+                <Footer></Footer>
+            </div>
         </div>
     );
 }

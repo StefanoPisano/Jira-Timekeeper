@@ -139,7 +139,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  height: 100%;
+  height: 80%;
 }
 
 .calendar-header {
@@ -470,8 +470,8 @@ body {
 
   .sidebar {
     width: 100%;
-    height: 60px;
-    flex-direction: row;
+    min-height: 200px;
+    flex-direction: column;
     padding: 0 1rem;
     border-right: none;
     border-bottom: 1px solid var(--border-light);

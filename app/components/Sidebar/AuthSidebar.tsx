@@ -250,9 +250,6 @@ export const AuthSidebar: React.FC<AuthSidebarProps> = ({ onAuthChange }) => {
                     </div>
                 </div>
             )}
-
-
-            <Footer/>
         </div>
     );
 };
