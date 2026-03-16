@@ -1,5 +1,14 @@
-import React, {useState, useEffect, SyntheticEvent} from 'react';
-import {Key, Trash2, Edit2, CheckCircle2, X, Info, HelpCircle} from 'lucide-react';
+import React, {useState, useEffect, useRef} from 'react';
+import {
+    Key,
+    Trash2,
+    Edit2,
+    CheckCircle2,
+    X,
+    Info,
+    HelpCircle,
+    FolderDownIcon, FolderUpIcon
+} from 'lucide-react';
 import type {JiraAuth} from '../../types/jira';
 import {getActiveAuth, testConnection} from "../../services/authentication/auth";
 import "../../styles/Modal.scss";
@@ -15,6 +24,7 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentAuth, setCurrentAuth] = useState<Partial<JiraAuth>>({});
     const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const loadAuths = () => {
         const storedAuths = localStorage.getItem('JIRA_AUTHS');
@@ -100,13 +110,20 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
             token: (currentAuth.token || '').trim()
         };
 
+        addAuth(trimmedAuth);
+        setIsEditing(false);
+        setTestStatus("idle")
+        onAuthChange();
+    };
+
+    const addAuth = (auth:JiraAuth) => {
         const updatedAuths = [...auths];
-        const index = updatedAuths.findIndex(a => a.id === trimmedAuth.id);
+        const index = updatedAuths.findIndex(a => a.id === auth.id);
 
         if (index >= 0) {
-            updatedAuths[index] = trimmedAuth;
+            updatedAuths[index] = auth;
         } else {
-            updatedAuths.push(trimmedAuth);
+            updatedAuths.push(auth);
         }
 
         localStorage.setItem('JIRA_AUTHS', JSON.stringify(updatedAuths));
@@ -116,10 +133,50 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
         }
 
         setAuths(updatedAuths);
-        setIsEditing(false);
-        setTestStatus("idle")
-        onAuthChange();
-    };
+    }
+
+    const handleExportAuth = () => {
+        const currentAuth = getActiveAuth();
+
+        const filename = `${currentAuth?.label}_credentials.json`;
+        const jsonStr = JSON.stringify(currentAuth);
+
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(jsonStr));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+
+    const handleImportButtonClick = () => fileInputRef.current?.click();
+
+    const handleImportAuth = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const result = e.target?.result;
+                if (typeof result === 'string') {
+                    const content = JSON.parse(result);
+                    const auth:JiraAuth = {
+                        id: content.id!,
+                        label: (content.label || '').trim(),
+                        domain: (content.domain || '').trim().replace(/^https?:\/\//, ''),
+                        email: (content.email || '').trim(),
+                        token: (content.token || '').trim()
+                    };
+
+                    addAuth(auth);
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
 
     return (
         <div className="auth-sidebar-content">
@@ -147,6 +204,18 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
                     <button className="btn-icon-sm text-error" onClick={handleDelete} disabled={auths.length === 0 || getActiveAuth() == null}>
                         <Trash2 size={24}/>
                     </button>
+                    <button className="btn-icon-sm" onClick={handleExportAuth} disabled={auths.length === 0 || getActiveAuth() == null}>
+                        <FolderDownIcon size={24}/>
+                    </button>
+                    <button className="btn-icon-sm" onClick={handleImportButtonClick} disabled={auths.length === 0 || getActiveAuth() == null}>
+                        <FolderUpIcon size={24}/>
+                    </button>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        onChange={handleImportAuth}
+                    />
                 </div>
             </div>
 
