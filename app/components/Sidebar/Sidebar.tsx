@@ -34,12 +34,6 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
         loadAuths();
     }, []);
 
-    // const handleSelect = (id: string) => {
-    //     localStorage.setItem('ACTIVE_JIRA_AUTH_ID', id);
-    //     setActiveId(id);
-    //     onAuthChange();
-    // };
-
     const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const value = event.target.value;
         localStorage.setItem('ACTIVE_JIRA_AUTH_ID', value);
