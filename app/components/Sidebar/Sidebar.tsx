@@ -204,10 +204,10 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
                     <button className="btn-icon-sm text-error" onClick={handleDelete} disabled={auths.length === 0 || getActiveAuth() == null}>
                         <Trash2 size={24}/>
                     </button>
-                    <button className="btn-icon-sm" onClick={handleExportAuth} disabled={auths.length === 0 || getActiveAuth() == null}>
+                    <button className="btn-icon-sm" onClick={handleExportAuth}>
                         <FolderDownIcon size={24}/>
                     </button>
-                    <button className="btn-icon-sm" onClick={handleImportButtonClick} disabled={auths.length === 0 || getActiveAuth() == null}>
+                    <button className="btn-icon-sm" onClick={handleImportButtonClick}>
                         <FolderUpIcon size={24}/>
                     </button>
                     <input
