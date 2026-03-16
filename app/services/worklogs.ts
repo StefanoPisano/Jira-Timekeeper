@@ -1,6 +1,8 @@
 import {addDays, format, isSameDay, startOfWeek} from 'date-fns';
 import type {DayWorklog} from '../types/jira';
-import {formatDate, apiFetch} from './api/apiClient';
+import {apiFetch} from "@/app/services/api/apiClient";
+
+const formatDate = (date: Date) => format(date, 'yyyy-MM-dd');
 
 export const fetchWeeklyWorklogs = async (currentDate: Date): Promise<DayWorklog[]> => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
