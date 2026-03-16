@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {addWeeks, endOfWeek, format, startOfWeek, subWeeks} from 'date-fns';
-import {Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2} from 'lucide-react';
+import {Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, RefreshCcw} from 'lucide-react';
 import type {DayWorklog} from '../../types/jira.ts';
 import {fetchWeeklyWorklogs} from '../../services/worklogs';
 import {DayCard} from '../DayCard/DayCard';
 import "../../styles/Calendar.scss"
 
 export const WeeklyCalendar: React.FC = () => {
+    const [forceRefresh,setForceRefresh] = useState<number | null>(null);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [worklogs, setWorklogs] = useState<DayWorklog[]>([]);
     const [loading, setLoading] = useState(true);
@@ -31,11 +32,12 @@ export const WeeklyCalendar: React.FC = () => {
         };
 
         loadData();
-    }, [currentDate]);
+    }, [currentDate, forceRefresh]);
 
     const handlePrevWeek = () => setCurrentDate(subWeeks(currentDate, 1));
     const handleNextWeek = () => setCurrentDate(addWeeks(currentDate, 1));
     const handleToday = () => setCurrentDate(new Date());
+    const handleRefresh = () => setForceRefresh(Math.random());
 
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
     const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
@@ -62,6 +64,10 @@ export const WeeklyCalendar: React.FC = () => {
                             <ChevronRight size={20} />
                         </button>
                     </div>
+
+                    <button className="btn btn-outline" onClick={handleRefresh}>
+                        <RefreshCcw size={20} />
+                    </button>
                 </div>
 
                 <div className="weekly-summary">
