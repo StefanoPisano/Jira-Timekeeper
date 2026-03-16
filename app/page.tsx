@@ -24,7 +24,7 @@ export default function Page() {
             </nav>
 
             <div className="main-content flex flex-col justify-between">
-                <main >
+                <main className={"flex-1"}>
                     <WeeklyCalendar key={refreshKey} />
                 </main>
                 <Footer></Footer>
