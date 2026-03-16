@@ -6,7 +6,8 @@ const Footer = () => {
                 Developed by <a className={"underline"} href={"https://stefanopisano.github.io/"}>Stefano
                 Pisano</a><br/>
                 Source code is under <a className={"underline"} href={"../LICENSE"}>MIT License.</a><br/>
-                © {new Date().getFullYear()}
+                © {new Date().getFullYear()}<br/>
+                <strong>Version 1.0.0</strong>
             </div>
         </>
     )
