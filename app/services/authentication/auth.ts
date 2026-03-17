@@ -1,6 +1,6 @@
 import type { JiraAuth } from '../../types/jira';
-import {apiFetch} from "@/app/services/api/apiClient";
-import {getAuthHeaders} from "@/app/services/api/headersUtil";
+import { apiFetch } from "@/app/services/api/apiClient";
+import { getAuthHeaders } from "@/app/services/api/headersUtil";
 
 const getStorageValue = (key: string) => localStorage.getItem(key);
 
@@ -11,7 +11,14 @@ export const getActiveAuth = (): JiraAuth | null => {
     try {
         const auths: JiraAuth[] = JSON.parse(authsJson);
         const activeId = getStorageValue('ACTIVE_JIRA_AUTH_ID');
-        return auths.find(a => a.id === activeId) || auths[0] || null;
+        const active = auths.find(a => a.id === activeId) || auths[0] || null;
+        if (active && active.workingHours === undefined) {
+            active.workingHours = 8;
+        }
+        if (active && active.showWeekends === undefined) {
+            active.showWeekends = false;
+        }
+        return active;
     } catch (e) {
         return null;
     }

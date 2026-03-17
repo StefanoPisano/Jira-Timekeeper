@@ -3,7 +3,9 @@ import { addWeeks, endOfWeek, format, startOfWeek, subWeeks } from 'date-fns';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, RefreshCcw } from 'lucide-react';
 import type { DayWorklog } from '../../types/jira.ts';
 import { fetchWeeklyWorklogs } from '../../services/worklogs';
+import { getActiveAuth } from '../../services/authentication/auth';
 import { DayCard } from '../DayCard/DayCard';
+import { isWeekend } from 'date-fns';
 import "../../styles/Calendar.scss"
 
 export const WeeklyCalendar: React.FC = () => {
@@ -42,6 +44,10 @@ export const WeeklyCalendar: React.FC = () => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
     const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
     const weekRange = `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d, yyyy')}`;
+
+    const activeAuth = getActiveAuth();
+    const showWeekends = activeAuth?.showWeekends ?? false;
+    const colCount = showWeekends ? 7 : 5;
 
     return (
         <div className="calendar-container">
@@ -88,10 +94,15 @@ export const WeeklyCalendar: React.FC = () => {
                         <p>Loading your tickets...</p>
                     </div>
                 ) : (
-                    <div className="calendar-grid">
-                        {worklogs.map((log: DayWorklog) => (
-                            <DayCard key={log.date} worklog={log} />
-                        ))}
+                    <div
+                        className="calendar-grid"
+                        style={{ '--col-count': colCount } as React.CSSProperties}
+                    >
+                        {worklogs
+                            .filter(log => showWeekends || !isWeekend(new Date(log.date)))
+                            .map((log: DayWorklog) => (
+                                <DayCard key={log.date} worklog={log} />
+                            ))}
                     </div>
                 )}
             </div>

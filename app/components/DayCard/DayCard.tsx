@@ -1,14 +1,18 @@
 import React from 'react';
-import {format, isToday, isWeekend} from 'date-fns';
-import type {DayWorklog} from '../../types/jira.ts';
-import {TicketItem} from '../Ticket/TicketItem';
+import { format, isToday, isWeekend } from 'date-fns';
+import type { DayWorklog } from '../../types/jira.ts';
+import { TicketItem } from '../Ticket/TicketItem';
 import "../../styles/DayCard.scss"
+
+import { getActiveAuth } from "../../services/authentication/auth";
 
 interface DayCardProps {
     worklog: DayWorklog;
 }
 
 export const DayCard: React.FC<DayCardProps> = ({ worklog }) => {
+    const activeAuth = getActiveAuth();
+    const workingHours = activeAuth?.workingHours ?? 8;
     const date = new Date(worklog.date);
     const dayName = format(date, 'EEEE');
     const dayNumber = format(date, 'd');
@@ -22,7 +26,7 @@ export const DayCard: React.FC<DayCardProps> = ({ worklog }) => {
                     <span className="day-name">{dayName}</span>
                     <span className="day-number">{dayNumber}</span>
                 </div>
-                <div className={`day-total ${worklog.totalHours !== 8 && date <= new Date()
+                <div className={`day-total ${worklog.totalHours !== workingHours && date <= new Date()
                     ? 'day-warning' : date <= new Date() ? 'day-ok' : ''}`}>
                     <span className="total-hours">{worklog.totalHours}h</span>
                     <span className="total-label">Total</span>

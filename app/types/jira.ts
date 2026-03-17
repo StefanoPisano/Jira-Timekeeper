@@ -17,4 +17,6 @@ export interface JiraAuth {
     domain: string;
     email: string;
     token: string;
+    workingHours?: number;
+    showWeekends?: boolean;
 }

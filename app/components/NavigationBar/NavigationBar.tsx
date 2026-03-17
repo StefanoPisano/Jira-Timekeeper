@@ -58,7 +58,9 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
             label: '',
             domain: '',
             email: '',
-            token: ''
+            token: '',
+            workingHours: 8,
+            showWeekends: false
         });
         setIsEditing(true);
     };
@@ -107,7 +109,9 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
             label: (currentAuth.label || '').trim(),
             domain: (currentAuth.domain || '').trim().replace(/^https?:\/\//, ''),
             email: (currentAuth.email || '').trim(),
-            token: (currentAuth.token || '').trim()
+            token: (currentAuth.token || '').trim(),
+            workingHours: currentAuth.workingHours || 8,
+            showWeekends: !!currentAuth.showWeekends
         };
 
         addAuth(trimmedAuth);
@@ -168,7 +172,9 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                         label: (content.label || '').trim(),
                         domain: (content.domain || '').trim().replace(/^https?:\/\//, ''),
                         email: (content.email || '').trim(),
-                        token: (content.token || '').trim()
+                        token: (content.token || '').trim(),
+                        workingHours: content.workingHours || 8,
+                        showWeekends: !!content.showWeekends
                     };
 
                     addAuth(auth);
@@ -273,6 +279,31 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                                     <Info size={12} />
                                     <span>Create one at id.atlassian.com/manage/api-tokens</span>
                                 </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Daily Working Hours</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="24"
+                                    step="0.5"
+                                    placeholder="e.g. 8"
+                                    value={currentAuth.workingHours || 8}
+                                    onChange={(e) => setCurrentAuth({ ...currentAuth, workingHours: parseFloat(e.target.value) })}
+                                    required
+                                />
+                                <p className="help-text">Expected hours per day for status indicators.</p>
+                            </div>
+
+                            <div className="form-group-checkbox">
+                                <label htmlFor="showWeekends">Show Weekends</label>
+                                <input
+                                    type="checkbox"
+                                    id="showWeekends"
+                                    checked={!!currentAuth.showWeekends}
+                                    onChange={(e) => setCurrentAuth({ ...currentAuth, showWeekends: e.target.checked })}
+                                />
                             </div>
 
                             <div className="settings-actions">

@@ -1,4 +1,3 @@
-
 .settings-trigger {
   background: none;
   border: none;
@@ -69,4 +68,29 @@
 
 .settings-actions .btn {
   flex: 1;
+}
+
+.form-group-checkbox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding: 0.25rem 0;
+}
+
+.form-group-checkbox label {
+  margin-bottom: 0 !important;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-group-checkbox input[type="checkbox"] {
+  width: 1.2rem !important;
+  height: 1.2rem !important;
+  cursor: pointer;
+  margin: 0 !important;
+  accent-color: var(--accent-primary);
 }
