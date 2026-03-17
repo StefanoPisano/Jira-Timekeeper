@@ -1,5 +1,5 @@
 .tickets-container {
-  padding: 1rem;
+  padding: .5rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -11,7 +11,7 @@
   background: var(--bg-secondary);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
-  padding: 0.875rem;
+  padding: 0.775rem;
   transition: all var(--transition-fast);
   cursor: pointer;
   position: relative;
@@ -48,11 +48,11 @@
 }
 
 .ticket-id a{
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   font-weight: 600;
   background: rgba(92, 107, 192, 0.15);
   color: var(--accent-secondary);
-  padding: 0.15rem 0.4rem;
+  padding: 0.15rem 0.3rem;
   border-radius: var(--radius-sm);
   letter-spacing: 0.02em;
 }
@@ -61,7 +61,7 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: var(--text-secondary);
 }
@@ -71,7 +71,7 @@
 }
 
 .ticket-summary {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--text-primary);
   line-height: 1.4;
   display: -webkit-box;
