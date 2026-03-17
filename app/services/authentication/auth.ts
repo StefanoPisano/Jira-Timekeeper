@@ -2,7 +2,7 @@ import type { JiraAuth } from '../../types/jira';
 import { apiFetch } from "@/app/services/api/apiClient";
 import { getAuthHeaders } from "@/app/services/api/headersUtil";
 
-const getStorageValue = (key: string) => localStorage.getItem(key);
+const getStorageValue = (key: string) => typeof window !== 'undefined' ? localStorage.getItem(key) : null;
 
 export const getActiveAuth = (): JiraAuth | null => {
     const authsJson = getStorageValue('JIRA_AUTHS');

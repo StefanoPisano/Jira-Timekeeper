@@ -204,17 +204,19 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
         <div className="auth-nav-content">
             <div className={"auth-nav-profile"}>
                 <div className="nav-auth-list">
-                    {auths.length > 0 ? (
-                        <select className="w-full select___auth-list" onChange={handleSelect}>
-                            {auths.map(auth => (
-                                <option key={auth.id} id={auth.id} value={auth.id}>
-                                    {auth.label}
-                                </option>
-                            ))}
-                        </select>
-                    ) : (
-                        <div className={"text-center text-xs no-auths"}>Missing auth profile. Please add one.</div>
-                    )}
+                    <select
+                        className="w-full select___auth-list"
+                        onChange={handleSelect}
+                        disabled={auths.length === 0}
+                        value={activeId || ''}
+                    >
+                        {auths.length === 0 && <option value="">No profiles</option>}
+                        {auths.map(auth => (
+                            <option key={auth.id} id={auth.id} value={auth.id}>
+                                {auth.label}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="nav-actions flex gap-1.5">
                     <button className="btn-icon-sm" onClick={handleAdd} title="Add New Auth">
