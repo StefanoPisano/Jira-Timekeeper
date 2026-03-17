@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {addWeeks, endOfWeek, format, startOfWeek, subWeeks} from 'date-fns';
-import {Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, RefreshCcw} from 'lucide-react';
-import type {DayWorklog} from '../../types/jira.ts';
-import {fetchWeeklyWorklogs} from '../../services/worklogs';
-import {DayCard} from '../DayCard/DayCard';
+import React, { useEffect, useState } from 'react';
+import { addWeeks, endOfWeek, format, startOfWeek, subWeeks } from 'date-fns';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, RefreshCcw } from 'lucide-react';
+import type { DayWorklog } from '../../types/jira.ts';
+import { fetchWeeklyWorklogs } from '../../services/worklogs';
+import { DayCard } from '../DayCard/DayCard';
 import "../../styles/Calendar.scss"
 
 export const WeeklyCalendar: React.FC = () => {
-    const [forceRefresh,setForceRefresh] = useState<number | null>(null);
+    const [forceRefresh, setForceRefresh] = useState<number | null>(null);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [worklogs, setWorklogs] = useState<DayWorklog[]>([]);
     const [loading, setLoading] = useState(true);
@@ -80,7 +80,7 @@ export const WeeklyCalendar: React.FC = () => {
                 {error ? (
                     <div className="error-state">
                         <p>{error}</p>
-                        <p className="help-text mt-4">Check your Jira authentication in the sidebar.</p>
+                        <p className="help-text mt-4">Check your Jira authentication in the navigation bar.</p>
                     </div>
                 ) : loading ? (
                     <div className="loading-state">

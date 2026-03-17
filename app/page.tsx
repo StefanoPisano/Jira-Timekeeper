@@ -1,9 +1,9 @@
 'use client';
 
-import {useState} from 'react';
-import {CalendarIcon} from 'lucide-react';
-import {WeeklyCalendar} from './components/Calendar/WeeklyCalendar';
-import {Sidebar} from './components/Sidebar/Sidebar';
+import { useState } from 'react';
+import { CalendarIcon } from 'lucide-react';
+import { WeeklyCalendar } from './components/Calendar/WeeklyCalendar';
+import { NavigationBar } from './components/NavigationBar/NavigationBar';
 import Footer from "@/app/components/Footer/Footer";
 
 export default function Page() {
@@ -15,13 +15,13 @@ export default function Page() {
 
     return (
         <div className="app-layout">
-            <nav className="sidebar">
+            <header className="top-nav">
                 <div className="logo-container">
                     <CalendarIcon className="text-accent" size={24} />
                     <span className="app-name">Jira Timekeeper</span>
                 </div>
-                <Sidebar onAuthChange={handleAuthChange} />
-            </nav>
+                <NavigationBar onAuthChange={handleAuthChange} />
+            </header>
 
             <div className="main-content flex flex-col justify-between">
                 <main className={"flex-1"}>

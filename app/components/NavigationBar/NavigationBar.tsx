@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Key,
     Trash2,
@@ -9,16 +9,16 @@ import {
     HelpCircle,
     FolderDownIcon, FolderUpIcon
 } from 'lucide-react';
-import type {JiraAuth} from '../../types/jira';
-import {getActiveAuth, testConnection} from "../../services/authentication/auth";
+import type { JiraAuth } from '../../types/jira';
+import { getActiveAuth, testConnection } from "../../services/authentication/auth";
 import "../../styles/Modal.scss";
-import "../../styles/Sidebar.scss";
+import "../../styles/NavigationBar.scss";
 
-interface AuthSidebarProps {
+interface AuthNavProps {
     onAuthChange: () => void;
 }
 
-export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
+export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
     const [auths, setAuths] = useState<JiraAuth[]>([]);
     const [activeId, setActiveId] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -116,7 +116,7 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
         onAuthChange();
     };
 
-    const addAuth = (auth:JiraAuth) => {
+    const addAuth = (auth: JiraAuth) => {
         const updatedAuths = [...auths];
         const index = updatedAuths.findIndex(a => a.id === auth.id);
 
@@ -157,13 +157,13 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
 
     const handleImportAuth = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if(file) {
+        if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const result = e.target?.result;
                 if (typeof result === 'string') {
                     const content = JSON.parse(result);
-                    const auth:JiraAuth = {
+                    const auth: JiraAuth = {
                         id: content.id!,
                         label: (content.label || '').trim(),
                         domain: (content.domain || '').trim().replace(/^https?:\/\//, ''),
@@ -179,9 +179,9 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
     }
 
     return (
-        <div className="auth-sidebar-content">
-            <div className={"auth-sidebar-profile"}>
-                <div className="sidebar-auth-list">
+        <div className="auth-nav-content">
+            <div className={"auth-nav-profile"}>
+                <div className="nav-auth-list">
                     {auths.length > 0 ? (
                         <select className="w-full select___auth-list" onChange={handleSelect}>
                             {auths.map(auth => (
@@ -194,21 +194,21 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
                         <div className={"text-center text-xs no-auths"}>Missing auth profile. Please add one.</div>
                     )}
                 </div>
-                <div className="sidebar-actions flex gap-1.5">
+                <div className="nav-actions flex gap-1.5">
                     <button className="btn-icon-sm" onClick={handleAdd} title="Add New Auth">
-                        <Key size={24}/>
+                        <Key size={24} />
                     </button>
-                    <button className="btn-icon-sm" onClick={handleEdit}  disabled={auths.length === 0 || getActiveAuth() == null}>
-                        <Edit2 size={24}/>
+                    <button className="btn-icon-sm" onClick={handleEdit} disabled={auths.length === 0 || getActiveAuth() == null}>
+                        <Edit2 size={24} />
                     </button>
                     <button className="btn-icon-sm text-error" onClick={handleDelete} disabled={auths.length === 0 || getActiveAuth() == null}>
-                        <Trash2 size={24}/>
+                        <Trash2 size={24} />
                     </button>
                     <button className="btn-icon-sm" onClick={handleExportAuth}>
-                        <FolderDownIcon size={24}/>
+                        <FolderDownIcon size={24} />
                     </button>
                     <button className="btn-icon-sm" onClick={handleImportButtonClick}>
-                        <FolderUpIcon size={24}/>
+                        <FolderUpIcon size={24} />
                     </button>
                     <input
                         type="file"
@@ -233,7 +233,7 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
                                     type="text"
                                     placeholder="e.g. Work, Personal, Client X"
                                     value={currentAuth.label || ''}
-                                    onChange={(e) => setCurrentAuth({...currentAuth, label: e.target.value})}
+                                    onChange={(e) => setCurrentAuth({ ...currentAuth, label: e.target.value })}
                                     required
                                 />
                             </div>
@@ -244,7 +244,7 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
                                     type="text"
                                     placeholder="e.g. your-company.atlassian.net"
                                     value={currentAuth.domain || ''}
-                                    onChange={(e) => setCurrentAuth({...currentAuth, domain: e.target.value})}
+                                    onChange={(e) => setCurrentAuth({ ...currentAuth, domain: e.target.value })}
                                 />
                                 <p className="help-text">Leave empty to use the default configured domain.</p>
                             </div>
@@ -255,7 +255,7 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
                                     type="email"
                                     placeholder="your-email@company.com"
                                     value={currentAuth.email || ''}
-                                    onChange={(e) => setCurrentAuth({...currentAuth, email: e.target.value})}
+                                    onChange={(e) => setCurrentAuth({ ...currentAuth, email: e.target.value })}
                                     required
                                 />
                             </div>
@@ -266,11 +266,11 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
                                     type="password"
                                     placeholder="Your Jira API Token"
                                     value={currentAuth.token || ''}
-                                    onChange={(e) => setCurrentAuth({...currentAuth, token: e.target.value})}
+                                    onChange={(e) => setCurrentAuth({ ...currentAuth, token: e.target.value })}
                                     required
                                 />
                                 <div className="help-text flex items-center gap-1">
-                                    <Info size={12}/>
+                                    <Info size={12} />
                                     <span>Create one at id.atlassian.com/manage/api-tokens</span>
                                 </div>
                             </div>
@@ -301,10 +301,10 @@ export const Sidebar: React.FC<AuthSidebarProps> = ({onAuthChange}) => {
                                     className={`mt-4 p-3 rounded-md text-sm flex items-center gap-2 ${testStatus === 'success' ? 'bg-success/10 text-success' :
                                         testStatus === 'error' ? 'bg-danger/10 text-danger' :
                                             'bg-accent/10 text-accent'
-                                    }`}>
-                                    {testStatus === 'success' && <CheckCircle2 size={16}/>}
-                                    {testStatus === 'error' && <X size={16}/>}
-                                    {testStatus === 'testing' && <HelpCircle size={16} className="animate-spin"/>}
+                                        }`}>
+                                    {testStatus === 'success' && <CheckCircle2 size={16} />}
+                                    {testStatus === 'error' && <X size={16} />}
+                                    {testStatus === 'testing' && <HelpCircle size={16} className="animate-spin" />}
                                     <span>
                                         {testStatus === 'success' && 'Connection successful!'}
                                         {testStatus === 'error' && 'Connection failed. Please check your credentials and domain.'}
