@@ -93,8 +93,8 @@
   .top-nav {
     flex-direction: row;
     height: 64px;
-    padding: 0 1rem;
-    gap: 0.5rem;
+    padding: 0 0.5rem;
+    gap: 0.25rem;
   }
 
   .nav-actions {
@@ -103,18 +103,30 @@
     align-items: center;
     margin: 0;
     flex-shrink: 0;
+    gap: 0.25rem;
+  }
+
+  .auth-nav-content {
+    min-width: 0;
   }
 
   .auth-nav-profile {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
     flex: 1;
+    min-width: 0;
   }
 
   .nav-auth-list {
     flex: 1;
     height: 40px;
+    min-width: 0;
+  }
+
+  .select___auth-list {
+    padding: 0 0.4rem;
+    font-size: 0.85rem;
   }
 }
