@@ -166,18 +166,34 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
             reader.onload = (e) => {
                 const result = e.target?.result;
                 if (typeof result === 'string') {
-                    const content = JSON.parse(result);
-                    const auth: JiraAuth = {
-                        id: content.id!,
-                        label: (content.label || '').trim(),
-                        domain: (content.domain || '').trim().replace(/^https?:\/\//, ''),
-                        email: (content.email || '').trim(),
-                        token: (content.token || '').trim(),
-                        workingHours: content.workingHours || 8,
-                        showWeekends: !!content.showWeekends
-                    };
+                    try {
+                        const content = JSON.parse(result);
 
-                    addAuth(auth);
+                        // Validation
+                        const requiredFields: (keyof JiraAuth)[] = ['label', 'domain', 'email', 'token'];
+                        const missingFields = requiredFields.filter(field => !content[field]);
+
+                        if (missingFields.length > 0) {
+                            alert(`Invalid profile file. Missing required fields: ${missingFields.join(', ')}`);
+                            return;
+                        }
+
+                        const auth: JiraAuth = {
+                            id: content.id || crypto.randomUUID(),
+                            label: (content.label || '').trim(),
+                            domain: (content.domain || '').trim().replace(/^https?:\/\//, ''),
+                            email: (content.email || '').trim(),
+                            token: (content.token || '').trim(),
+                            workingHours: content.workingHours || 8,
+                            showWeekends: !!content.showWeekends
+                        };
+
+                        addAuth(auth);
+                        onAuthChange();
+                    } catch (err) {
+                        console.error("Failed to parse imported file", err);
+                        alert("Failed to import profile. Please ensure the file is a valid JSON.");
+                    }
                 }
             };
             reader.readAsText(file);
@@ -210,10 +226,10 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                     <button className="btn-icon-sm text-error" onClick={handleDelete} disabled={auths.length === 0 || getActiveAuth() == null}>
                         <Trash2 size={24} />
                     </button>
-                    <button className="btn-icon-sm" onClick={handleExportAuth}>
+                    <button className="btn-icon-sm" onClick={handleExportAuth} title="Export Current Auth" disabled={auths.length === 0 || getActiveAuth() == null}>
                         <FolderDownIcon size={24} />
                     </button>
-                    <button className="btn-icon-sm" onClick={handleImportButtonClick}>
+                    <button className="btn-icon-sm" onClick={handleImportButtonClick} title="Import Auth From JSON">
                         <FolderUpIcon size={24} />
                     </button>
                     <input
@@ -221,6 +237,7 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                         ref={fileInputRef}
                         style={{ display: 'none' }}
                         onChange={handleImportAuth}
+                        accept=".json"
                     />
                 </div>
             </div>
