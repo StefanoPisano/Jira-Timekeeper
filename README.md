@@ -36,4 +36,4 @@ Development has been done with the help of the **free tiers plans** of the follo
 - ChatGPT
 
 ## License
-This project is open source under the MIT License. See the LICENSE file for details.
+This project is open source under the GNU General Public License. See the LICENSE file for details.
