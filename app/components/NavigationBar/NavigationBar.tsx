@@ -248,7 +248,7 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                 <div className="settings-overlay">
                     <div className="settings-modal" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-6">
-                            <h2>{currentAuth.label ? 'Edit' : 'Add'} Jira Auth</h2>
+                            <h2>{currentAuth.label ? 'Edit' : 'Add'} Jira Profile</h2>
                         </div>
 
                         <form onSubmit={handleSave}>
@@ -332,7 +332,7 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                                     onClick={handleTest}
                                     disabled={testStatus === 'testing' || !currentAuth.email || !currentAuth.token}
                                 >
-                                    {testStatus === 'testing' ? 'Testing...' : 'Test Connection'}
+                                    {testStatus === 'testing' ? 'Testing...' : 'Test'}
                                 </button>
                                 <div className="flex-1"></div>
                                 <button type="button" className="btn btn-outline" onClick={() => {
@@ -342,7 +342,7 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                                     Cancel
                                 </button>
                                 <button type="submit" className="btn btn-primary">
-                                    Save Profile
+                                    Save
                                 </button>
                             </div>
 
