@@ -15,11 +15,13 @@ It’s built to stay out of your way so you can focus on getting work done — n
 
 #### Key features
 
-▶️ Start and stop timers for your tasks with a single click
+▶️ Start and stop timers for your tasks with a single click.
 
-📅 Instantly see what you’ve worked on today
+📅 Instantly see what you’ve worked on today.
 
-⚡ Lightweight and fast — runs directly in your browser
+⚡ Lightweight and fast — runs directly in your browser.
+
+🔑 Easily **share** your JIRA profiles using an encrypted json or url - **we do not store any credentials used for encryption.** 
 
 ## Tech stack (kept simple)
 - React + Next.js
