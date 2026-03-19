@@ -12,6 +12,7 @@ import {
 import type { JiraAuth } from '../../types/jira';
 import { getActiveAuth, testConnection } from "../../services/authentication/auth";
 import { encryptData, decryptData, validatePassword } from "../../utils/crypto";
+import { shareContent } from "../../utils/share";
 import "../../styles/Modal.scss";
 import "../../styles/NavigationBar.scss";
 
@@ -29,7 +30,7 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
     const [isImporting, setIsImporting] = useState(false);
     const [isSharing, setIsSharing] = useState(false);
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
-    const [showCopySuccess, setShowCopySuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [importFile, setImportFile] = useState<File | null>(null);
@@ -235,12 +236,21 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
             const baseUrl = window.location.origin + window.location.pathname;
             const shareUrl = `${baseUrl}#import=${encodeURIComponent(encryptedData)}`;
 
-            await navigator.clipboard.writeText(shareUrl);
-            setShowCopySuccess(true);
-            setTimeout(() => setShowCopySuccess(false), 3000);
+            const result = await shareContent({
+                title: 'Jira Profile',
+                text: `Import my Jira profile: ${currentAuth.label}`,
+                url: shareUrl
+            });
 
-            setIsSharing(false);
-            setPassword('');
+            if (result !== 'failed') {
+                setSuccessMessage(result === 'shared' ? 'Profile shared!' : 'Link copied to clipboard!');
+                setTimeout(() => setSuccessMessage(null), 3000);
+                setIsSharing(false);
+                setPassword('');
+                setConfirmPassword('');
+            } else {
+                setPassError("Sharing failed. Please try again.");
+            }
         } catch (err) {
             console.error("Sharing failed", err);
             setPassError("Sharing failed. Please try again.");
@@ -667,10 +677,10 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                 </div>
             )}
 
-            {showCopySuccess && (
+            {successMessage && (
                 <div className="fixed bottom-4 right-4 bg-success text-white p-3 rounded-md shadow-lg flex items-center gap-2 animate-bounce">
                     <ClipboardCheck size={20} />
-                    <span>Link copied to clipboard!</span>
+                    <span>{successMessage}</span>
                 </div>
             )}
         </div>
