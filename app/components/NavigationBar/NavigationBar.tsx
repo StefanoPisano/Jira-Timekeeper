@@ -7,10 +7,11 @@ import {
     X,
     Info,
     HelpCircle,
-    FolderDownIcon, FolderUpIcon
+    FolderDownIcon, FolderUpIcon, Lock, Unlock, Share2, ClipboardCheck
 } from 'lucide-react';
 import type { JiraAuth } from '../../types/jira';
 import { getActiveAuth, testConnection } from "../../services/authentication/auth";
+import { encryptData, decryptData, validatePassword } from "../../utils/crypto";
 import "../../styles/Modal.scss";
 import "../../styles/NavigationBar.scss";
 
@@ -24,6 +25,15 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentAuth, setCurrentAuth] = useState<Partial<JiraAuth>>({});
     const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
+    const [isExporting, setIsExporting] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
+    const [showCopySuccess, setShowCopySuccess] = useState(false);
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [importFile, setImportFile] = useState<File | null>(null);
+    const [importHashData, setImportHashData] = useState<string | null>(null);
+    const [passError, setPassError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const loadAuths = () => {
@@ -42,6 +52,18 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
 
     useEffect(() => {
         loadAuths();
+
+        // Check for share link in hash
+        const hash = window.location.hash;
+        if (hash.startsWith('#import=')) {
+            const data = decodeURIComponent(hash.substring(8));
+            setImportHashData(data);
+            setIsImporting(true);
+            setPassword('');
+            setPassError(null);
+            // Clear hash to avoid re-triggering on refresh if user cancels
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
     }, []);
 
     const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -140,21 +162,88 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
     }
 
     const handleExportAuth = () => {
+        setIsExporting(true);
+        setPassword('');
+        setConfirmPassword('');
+        setPassError(null);
+    }
+
+    const confirmExport = async () => {
+        const error = validatePassword(password);
+        if (error) {
+            setPassError(error);
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setPassError("Passwords do not match.");
+            return;
+        }
+
         const currentAuth = getActiveAuth();
+        if (!currentAuth) return;
 
-        const filename = `${currentAuth?.label}_credentials.json`;
-        const jsonStr = JSON.stringify(currentAuth);
+        try {
+            const jsonStr = JSON.stringify(currentAuth);
+            const encryptedData = await encryptData(jsonStr, password);
 
-        const element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(jsonStr));
-        element.setAttribute('download', filename);
+            const filename = `${currentAuth.label || 'profile'}_credentials.json`;
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(encryptedData));
+            element.setAttribute('download', filename);
 
-        element.style.display = 'none';
-        document.body.appendChild(element);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
 
-        element.click();
+            setIsExporting(false);
+            setPassword('');
+        } catch (err) {
+            console.error("Encryption failed", err);
+            setPassError("Encryption failed. Please try again.");
+        }
+    }
 
-        document.body.removeChild(element);
+    const handleShareAuth = () => {
+        setIsSharing(true);
+        setPassword('');
+        setConfirmPassword('');
+        setPassError(null);
+    }
+
+    const confirmShare = async () => {
+        const error = validatePassword(password);
+        if (error) {
+            setPassError(error);
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setPassError("Passwords do not match.");
+            return;
+        }
+
+        const currentAuth = getActiveAuth();
+        if (!currentAuth) return;
+
+        try {
+            const jsonStr = JSON.stringify(currentAuth);
+            const encryptedData = await encryptData(jsonStr, password);
+
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}#import=${encodeURIComponent(encryptedData)}`;
+
+            await navigator.clipboard.writeText(shareUrl);
+            setShowCopySuccess(true);
+            setTimeout(() => setShowCopySuccess(false), 3000);
+
+            setIsSharing(false);
+            setPassword('');
+        } catch (err) {
+            console.error("Sharing failed", err);
+            setPassError("Sharing failed. Please try again.");
+        }
     }
 
     const handleImportButtonClick = () => fileInputRef.current?.click();
@@ -162,41 +251,65 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
     const handleImportAuth = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
+            setImportFile(file);
+            setIsImporting(true);
+            setPassword('');
+            setPassError(null);
+            // Reset file input so same file can be selected again
+            event.target.value = '';
+        }
+    }
+
+    const confirmImport = async () => {
+        if (!importFile && !importHashData) return;
+
+        const processData = async (data: string) => {
+            try {
+                const decryptedData = await decryptData(data, password);
+                const content = JSON.parse(decryptedData);
+
+                // Validation
+                const requiredFields: (keyof JiraAuth)[] = ['label', 'domain', 'email', 'token'];
+                const missingFields = requiredFields.filter(field => !content[field]);
+
+                if (missingFields.length > 0) {
+                    setPassError(`Invalid profile data. Missing required fields.`);
+                    return;
+                }
+
+                const auth: JiraAuth = {
+                    id: content.id || crypto.randomUUID(),
+                    label: (content.label || '').trim(),
+                    domain: (content.domain || '').trim().replace(/^https?:\/\//, ''),
+                    email: (content.email || '').trim(),
+                    token: (content.token || '').trim(),
+                    workingHours: content.workingHours || 8,
+                    showWeekends: !!content.showWeekends
+                };
+
+                addAuth(auth);
+                onAuthChange();
+                setIsImporting(false);
+                setPassword('');
+                setImportFile(null);
+                setImportHashData(null);
+            } catch (err) {
+                console.error("Failed to decrypt or parse imported data", err);
+                setPassError("Incorrect password or invalid data.");
+            }
+        };
+
+        if (importHashData) {
+            await processData(importHashData);
+        } else if (importFile) {
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 const result = e.target?.result;
                 if (typeof result === 'string') {
-                    try {
-                        const content = JSON.parse(result);
-
-                        // Validation
-                        const requiredFields: (keyof JiraAuth)[] = ['label', 'domain', 'email', 'token'];
-                        const missingFields = requiredFields.filter(field => !content[field]);
-
-                        if (missingFields.length > 0) {
-                            alert(`Invalid profile file. Missing required fields: ${missingFields.join(', ')}`);
-                            return;
-                        }
-
-                        const auth: JiraAuth = {
-                            id: content.id || crypto.randomUUID(),
-                            label: (content.label || '').trim(),
-                            domain: (content.domain || '').trim().replace(/^https?:\/\//, ''),
-                            email: (content.email || '').trim(),
-                            token: (content.token || '').trim(),
-                            workingHours: content.workingHours || 8,
-                            showWeekends: !!content.showWeekends
-                        };
-
-                        addAuth(auth);
-                        onAuthChange();
-                    } catch (err) {
-                        console.error("Failed to parse imported file", err);
-                        alert("Failed to import profile. Please ensure the file is a valid JSON.");
-                    }
+                    await processData(result);
                 }
             };
-            reader.readAsText(file);
+            reader.readAsText(importFile);
         }
     }
 
@@ -230,6 +343,9 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                     </button>
                     <button className="btn-icon-sm" onClick={handleExportAuth} title="Export Current Auth" disabled={auths.length === 0 || getActiveAuth() == null}>
                         <FolderDownIcon size={24} />
+                    </button>
+                    <button className="btn-icon-sm" onClick={handleShareAuth} title="Share Profile Link" disabled={auths.length === 0 || getActiveAuth() == null}>
+                        <Share2 size={24} />
                     </button>
                     <button className="btn-icon-sm" onClick={handleImportButtonClick} title="Import Auth From JSON">
                         <FolderUpIcon size={24} />
@@ -364,6 +480,140 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                             )}
                         </form>
                     </div>
+                </div>
+            )}
+            {isExporting && (
+                <div className="settings-overlay">
+                    <div className="settings-modal" onClick={e => e.stopPropagation()}>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="flex items-center gap-2">
+                                <Lock size={20} />
+                                Encrypt Profile Export
+                            </h2>
+                        </div>
+                        <p className="mb-4 text-sm text-accent">
+                            Choose a password to encrypt your profile. You will need this password when importing the file.
+                        </p>
+                        <div className="form-group">
+                            <label>Export Password</label>
+                            <input
+                                type="password"
+                                placeholder="6-18 chars, numbers, caps & symbols"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                autoFocus
+                            />
+                        </div>
+                        <div className="form-group mt-2">
+                            <label>Confirm Password</label>
+                            <input
+                                type="password"
+                                placeholder="Re-enter password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                            {passError && <p className="text-danger text-xs mt-1">{passError}</p>}
+                        </div>
+                        <div className="settings-actions mt-6">
+                            <button type="button" className="btn btn-outline" onClick={() => setIsExporting(false)}>
+                                Cancel
+                            </button>
+                            <button type="button" className="btn btn-primary" onClick={confirmExport}>
+                                Export Encrypted
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isImporting && (
+                <div className="settings-overlay">
+                    <div className="settings-modal" onClick={e => e.stopPropagation()}>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="flex items-center gap-2">
+                                <Unlock size={20} />
+                                Decrypt Profile Import
+                            </h2>
+                        </div>
+                        <p className="mb-4 text-sm text-accent">
+                            Enter the password that was used to encrypt this profile.
+                        </p>
+                        <div className="form-group">
+                            <label>Decryption Password</label>
+                            <input
+                                type="password"
+                                placeholder="Enter password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                autoFocus
+                                onKeyDown={(e) => e.key === 'Enter' && confirmImport()}
+                            />
+                            {passError && <p className="text-danger text-xs mt-1">{passError}</p>}
+                        </div>
+                        <div className="settings-actions mt-6">
+                            <button type="button" className="btn btn-outline" onClick={() => {
+                                setIsImporting(false);
+                                setImportFile(null);
+                                setImportHashData(null);
+                            }}>
+                                Cancel
+                            </button>
+                            <button type="button" className="btn btn-primary" onClick={confirmImport}>
+                                Import & Decrypt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isSharing && (
+                <div className="settings-overlay">
+                    <div className="settings-modal" onClick={e => e.stopPropagation()}>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="flex items-center gap-2">
+                                <Share2 size={20} />
+                                Share Profile Link
+                            </h2>
+                        </div>
+                        <p className="mb-4 text-sm text-accent">
+                            Choose a password to encrypt your profile link. The recipient will need this password to import the profile.
+                        </p>
+                        <div className="form-group">
+                            <label>Sharing Password</label>
+                            <input
+                                type="password"
+                                placeholder="6-18 chars, numbers, caps & symbols"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                autoFocus
+                            />
+                        </div>
+                        <div className="form-group mt-2">
+                            <label>Confirm Password</label>
+                            <input
+                                type="password"
+                                placeholder="Re-enter password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                            {passError && <p className="text-danger text-xs mt-1">{passError}</p>}
+                        </div>
+                        <div className="settings-actions mt-6">
+                            <button type="button" className="btn btn-outline" onClick={() => setIsSharing(false)}>
+                                Cancel
+                            </button>
+                            <button type="button" className="btn btn-primary" onClick={confirmShare}>
+                                Copy Share Link
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showCopySuccess && (
+                <div className="fixed bottom-4 right-4 bg-success text-white p-3 rounded-md shadow-lg flex items-center gap-2 animate-bounce">
+                    <ClipboardCheck size={20} />
+                    <span>Link copied to clipboard!</span>
                 </div>
             )}
         </div>
