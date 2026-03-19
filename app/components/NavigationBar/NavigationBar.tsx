@@ -7,7 +7,7 @@ import {
     X,
     Info,
     HelpCircle,
-    FolderDownIcon, FolderUpIcon, Lock, Unlock, Share2, ClipboardCheck
+    FolderDownIcon, FolderUpIcon, Lock, Unlock, Share2, ClipboardCheck, ArrowRightLeft
 } from 'lucide-react';
 import type { JiraAuth } from '../../types/jira';
 import { getActiveAuth, testConnection } from "../../services/authentication/auth";
@@ -28,6 +28,7 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
     const [isExporting, setIsExporting] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
     const [isSharing, setIsSharing] = useState(false);
+    const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
     const [showCopySuccess, setShowCopySuccess] = useState(false);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -341,14 +342,8 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                     <button className="btn-icon-sm text-error" onClick={handleDelete} disabled={auths.length === 0 || getActiveAuth() == null}>
                         <Trash2 size={24} />
                     </button>
-                    <button className="btn-icon-sm" onClick={handleExportAuth} title="Export Current Auth" disabled={auths.length === 0 || getActiveAuth() == null}>
-                        <FolderDownIcon size={24} />
-                    </button>
-                    <button className="btn-icon-sm" onClick={handleShareAuth} title="Share Profile Link" disabled={auths.length === 0 || getActiveAuth() == null}>
-                        <Share2 size={24} />
-                    </button>
-                    <button className="btn-icon-sm" onClick={handleImportButtonClick} title="Import Auth From JSON">
-                        <FolderUpIcon size={24} />
+                    <button className="btn-icon-sm" onClick={() => setIsTransferModalOpen(true)} title="Import / Export / Share Profiles">
+                        <ArrowRightLeft size={24} />
                     </button>
                     <input
                         type="file"
@@ -604,6 +599,68 @@ export const NavigationBar: React.FC<AuthNavProps> = ({ onAuthChange }) => {
                             </button>
                             <button type="button" className="btn btn-primary" onClick={confirmShare}>
                                 Copy Share Link
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isTransferModalOpen && (
+                <div className="settings-overlay">
+                    <div className="settings-modal transfer-modal" onClick={e => e.stopPropagation()}>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="flex items-center gap-2">
+                                <ArrowRightLeft size={20} />
+                                Transfer Profiles
+                            </h2>
+                            <button className="btn-icon-sm" onClick={() => setIsTransferModalOpen(false)}>
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="transfer-options grid grid-cols-1 gap-4">
+                            <button
+                                className="btn btn-outline flex flex-col items-center justify-center p-6 h-auto gap-3 text-center"
+                                onClick={() => {
+                                    setIsTransferModalOpen(false);
+                                    handleImportButtonClick();
+                                }}
+                            >
+                                <FolderUpIcon size={32} />
+                                <div>
+                                    <div className="font-bold">Import Profile</div>
+                                    <div className="text-xs text-accent">Upload a .json file</div>
+                                </div>
+                            </button>
+
+                            <button
+                                className="btn btn-outline flex flex-col items-center justify-center p-6 h-auto gap-3 text-center"
+                                disabled={auths.length === 0 || getActiveAuth() == null}
+                                onClick={() => {
+                                    setIsTransferModalOpen(false);
+                                    handleExportAuth();
+                                }}
+                            >
+                                <FolderDownIcon size={32} />
+                                <div>
+                                    <div className="font-bold">Export Profile</div>
+                                    <div className="text-xs text-accent">Download as encrypted .json</div>
+                                </div>
+                            </button>
+
+                            <button
+                                className="btn btn-outline flex flex-col items-center justify-center p-6 h-auto gap-3 text-center"
+                                disabled={auths.length === 0 || getActiveAuth() == null}
+                                onClick={() => {
+                                    setIsTransferModalOpen(false);
+                                    handleShareAuth();
+                                }}
+                            >
+                                <Share2 size={32} />
+                                <div>
+                                    <div className="font-bold">Share Link</div>
+                                    <div className="text-xs text-accent">Copy encrypted link to clipboard</div>
+                                </div>
                             </button>
                         </div>
                     </div>
