@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { CalendarIcon } from 'lucide-react';
-import { WeeklyCalendar } from './components/Calendar/WeeklyCalendar';
-import { NavigationBar } from './components/NavigationBar/NavigationBar';
+import {useState} from 'react';
+import {WeeklyCalendar} from './components/Calendar/WeeklyCalendar';
+import {NavigationBar} from './components/NavigationBar/NavigationBar';
 import Footer from "@/app/components/Footer/Footer";
+import logo from './assets/logo_white.png';
 
 export default function Page() {
     const [refreshKey, setRefreshKey] = useState(0);
@@ -17,7 +17,7 @@ export default function Page() {
         <div className="app-layout">
             <header className="top-nav">
                 <div className="logo-container">
-                    <CalendarIcon className="text-accent" size={24} />
+                    <img src={logo.src} className={"w-12"} alt={"Jira Timekeeper logo"}/>
                     <span className="app-name">Jira Timekeeper</span>
                 </div>
                 <NavigationBar onAuthChange={handleAuthChange} />

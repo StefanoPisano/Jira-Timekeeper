@@ -1,3 +1,7 @@
+<p align="center">
+<img src="./app/assets/logo_white.png" width="150px"/>
+</p>
+
 # ⏱️ Jira Timekeeper
 
 Track your time. Sync your work. Stay focused.
